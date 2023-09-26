@@ -1,0 +1,24 @@
+# *.tex *.dvi *.idx *.aux *.log *.ind *.ilg */*.o */*.d */*.asm */*.sym 
+**/*.tex
+**/*.dvi
+**/*.idx
+**/*.aux
+**/*.log
+**/*.ind
+**/*.ilg
+**/*.o
+**/*.d
+**/*.asm
+**/*.sym 
+
+**/initcode
+**/initcode.out
+**/kernel 
+**/fs.img
+**/mkfs/mkfs 
+**/.gdbinit
+**/usys.S
+/initial-xv6/src/user/_*
+**/tests-out/
+
+**/.vscode/

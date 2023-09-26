@@ -65,9 +65,14 @@ sys_dup(void)
   return fd;
 }
 
+// counter for calls to read() -- used in getreadcount()
+int readCount = 0;
+
 uint64
 sys_read(void)
 {
+  readCount++;
+
   struct file *f;
   int n;
   uint64 p;
@@ -502,4 +507,10 @@ sys_pipe(void)
     return -1;
   }
   return 0;
+}
+
+uint64
+sys_getreadcount(void)
+{
+  return readCount;
 }
