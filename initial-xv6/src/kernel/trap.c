@@ -83,6 +83,12 @@ void usertrap(void)
   {
     if(p->handler >= 0)
     {
+      // update process' CPU ticks since last call to alarm handler
+      if(p->alarmInterval >= 0)
+        p->ticksElapsed = (p->ticksElapsed + 1) % p->alarmInterval;
+      else
+        p->ticksElapsed = p->ticksElapsed + 1;
+
       if(p->ticksElapsed == 0 && p->isAlarmOn == 0) // call alarm handler function
       {
         p->isAlarmOn = 1;
@@ -91,11 +97,6 @@ void usertrap(void)
         p->trapframe->epc = p->handler; // jump to handler
       }
 
-      // update process' CPU ticks since last call to alarm handler
-      if(p->alarmInterval >= 0)
-        p->ticksElapsed = (p->ticksElapsed + 1) % p->alarmInterval;
-      else
-        p->ticksElapsed = p->ticksElapsed + 1;
     }
 
     yield();

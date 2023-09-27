@@ -154,7 +154,7 @@ found:
   p->ctime = ticks;
   p->alarmInterval = -1; // no call to sigalarm yet
   p->handler = -1; // no handler function yet
-  p->ticksElapsed = 0; // grows -ve if handler is -1, +ve if handler is present (>=0)
+  p->ticksElapsed = 0; // grows +ve, modulo p->alarmInterval if handler >= 0
   p->breakoffTF = 0; // 0 if no handler
   p->isAlarmOn = 0;
   return p;
@@ -180,6 +180,14 @@ freeproc(struct proc *p)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
+
+  p->alarmInterval = 0;
+  p->handler = 0;
+  p->ticksElapsed = 0;
+  if(p->breakoffTF)
+    kfree((void*)p->breakoffTF);
+  p->breakoffTF = 0;
+  p->isAlarmOn = 0;
 }
 
 // Create a user page table for a given process, with no user memory,

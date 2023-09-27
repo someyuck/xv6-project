@@ -129,9 +129,10 @@ uint64 sys_sigalarm(void)
 uint64 sys_sigreturn(void)
 {
   struct proc *p = myproc();
-  p->isAlarmOn = 0;
   memmove(p->trapframe, p->breakoffTF, PGSIZE); // restore original trapframe
-  kfree(p->breakoffTF);
+  kfree((void*)p->breakoffTF);
   p->breakoffTF = 0;
+  p->isAlarmOn = 0;
+  p->ticksElapsed = 0;
   return p->trapframe->a0;
 }
