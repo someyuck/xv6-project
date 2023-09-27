@@ -9,3 +9,6 @@ OSN Monsoon 2023 mini project 2
 
 - You are free to delete these instructions and add your report before submitting. 
 
+## assumptions
+1. For `sigalarm`, the `handler` function will have no arguments defined (taking a hint from the `alaramtest.c` file). I have allowed the return type to be anything (by using `void`) but it will not be used anyway.
+2. For `sigalarm`, to disable any alarm handling, pass any negative value to the `handler` argument of `sigalarm()`.

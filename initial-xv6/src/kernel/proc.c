@@ -152,6 +152,11 @@ found:
   p->rtime = 0;
   p->etime = 0;
   p->ctime = ticks;
+  p->alarmInterval = -1; // no call to sigalarm yet
+  p->handler = -1; // no handler function yet
+  p->ticksElapsed = 0; // grows -ve if handler is -1, +ve if handler is present (>=0)
+  p->breakoffTF = 0; // 0 if no handler
+  p->isAlarmOn = 0;
   return p;
 }
 

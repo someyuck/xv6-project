@@ -108,3 +108,30 @@ sys_waitx(void)
     return -1;
   return ret;
 }
+
+// these 4 steps are implemented in trap.c:usertrap() :
+// trap into kernel every 'interval' CPU ticks (we anyways trap at every tick)
+// then trap into user space to execute the handler function (as alarm timer goes off)
+// trap back into kernel 
+// restore previous state (call sigreturn()) and trap back into user space to continue executing
+uint64 sys_sigalarm(void)
+{
+  uint64 interval;
+  uint64 handler;
+  argaddr(0, &interval);
+  argaddr(1, &handler);
+  struct proc *p = myproc();
+  p->alarmInterval = interval;
+  p->handler = handler;
+  return 0;
+}
+
+uint64 sys_sigreturn(void)
+{
+  struct proc *p = myproc();
+  p->isAlarmOn = 0;
+  memmove(p->trapframe, p->breakoffTF, PGSIZE); // restore original trapframe
+  kfree(p->breakoffTF);
+  p->breakoffTF = 0;
+  return p->trapframe->a0;
+}

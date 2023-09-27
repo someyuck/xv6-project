@@ -80,7 +80,26 @@ void usertrap(void)
 
   // give up the CPU if this is a timer interrupt.
   if (which_dev == 2)
+  {
+    if(p->handler >= 0)
+    {
+      if(p->ticksElapsed == 0 && p->isAlarmOn == 0) // call alarm handler function
+      {
+        p->isAlarmOn = 1;
+        p->breakoffTF = kalloc(); // save current trapframe to restore in sigreturn()
+        memmove(p->breakoffTF, p->trapframe, PGSIZE);
+        p->trapframe->epc = p->handler; // jump to handler
+      }
+
+      // update process' CPU ticks since last call to alarm handler
+      if(p->alarmInterval >= 0)
+        p->ticksElapsed = (p->ticksElapsed + 1) % p->alarmInterval;
+      else
+        p->ticksElapsed = p->ticksElapsed + 1;
+    }
+
     yield();
+  }
 
   usertrapret();
 }
