@@ -77,7 +77,7 @@ void usertrap(void)
 
   if (killed(p))
     exit(-1);
-
+  
   // give up the CPU if this is a timer interrupt.
   if (which_dev == 2)
   {
@@ -96,9 +96,7 @@ void usertrap(void)
         memmove(p->breakoffTF, p->trapframe, PGSIZE);
         p->trapframe->epc = p->handler; // jump to handler
       }
-
     }
-
     yield();
   }
 

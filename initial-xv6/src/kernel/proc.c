@@ -482,6 +482,8 @@ void scheduler(void)
     // Avoid deadlock by ensuring that devices can interrupt.
     intr_on();
 
+    #ifdef RR
+
     for (p = proc; p < &proc[NPROC]; p++)
     {
       acquire(&p->lock);
@@ -500,6 +502,43 @@ void scheduler(void)
       }
       release(&p->lock);
     }
+  
+    #elif defined(FCFS)
+    
+    struct proc *oldest_p = 0;
+    uint min_ctime = ticks + 1; // current number of cpu ticks + 1. a process couldn't possibly have been created sooner than this
+    // find the process with least ctime (oldest created runnable process)
+    for (p = proc; p < &proc[NPROC]; p++)
+    {
+      if(p->ctime < min_ctime && p->state == RUNNABLE)
+      {
+        oldest_p = p;
+        min_ctime = p->ctime;
+      }
+    } 
+    if(oldest_p == 0) // no process found to run
+      continue;
+
+    acquire(&oldest_p->lock);
+    if(oldest_p->state == RUNNABLE)
+    {
+      // Switch to chosen process.  It is the process's job
+      // to release its lock and then reacquire it
+      // before jumping back to us.
+      oldest_p->state = RUNNING;
+      c->proc = oldest_p;
+      swtch(&c->context, &oldest_p->context);
+
+      // Process is done running for now.
+      // It should have changed its oldest_p->state before coming back.
+      c->proc = 0;
+    }
+    release(&oldest_p->lock);
+
+    #elif defined(MLFQ)
+    printf("mlfq\n");
+
+    #endif
   }
 }
 

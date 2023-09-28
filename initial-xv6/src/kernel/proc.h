@@ -123,7 +123,6 @@ struct proc
   uint64 handler;              // position of the alarm handler
   int isAlarmOn;               // if alarm handler is being executed
   uint ticksElapsed;           // number of ticks since last execution of alarm handler: negative if handler pointer is NULL
-  // uint64 breakoffPoint;        // point in program where execution was broken to execute the handler; return here once execution is finished
   struct trapframe *breakoffTF; // trapframe when execution is broken off
 };
 
