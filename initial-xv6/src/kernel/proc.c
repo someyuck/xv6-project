@@ -506,21 +506,19 @@ void scheduler(void)
     #elif defined(FCFS)
     
     struct proc *oldest_p = 0;
-    uint min_ctime = ticks + 1; // current number of cpu ticks + 1. a process couldn't possibly have been created sooner than this
-    // find the process with least ctime (oldest created runnable process)
+    // find the process with least ctime (oldest created runnable/sleeping (waiting for i/o) process)
     for (p = proc; p < &proc[NPROC]; p++)
     {
-      if(p->ctime < min_ctime && p->state == RUNNABLE)
-      {
+      acquire(&p->lock);
+      if((p->state == RUNNABLE) && (oldest_p == 0 || p->ctime < oldest_p->ctime))
         oldest_p = p;
-        min_ctime = p->ctime;
-      }
+      release(&p->lock);
     } 
     if(oldest_p == 0) // no process found to run
       continue;
 
     acquire(&oldest_p->lock);
-    if(oldest_p->state == RUNNABLE)
+    if(oldest_p->state == RUNNABLE) // if it was sleeping, we'll wait till it makes itself runnable, so do nothing in that case
     {
       // Switch to chosen process.  It is the process's job
       // to release its lock and then reacquire it

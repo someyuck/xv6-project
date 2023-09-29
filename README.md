@@ -9,11 +9,18 @@ OSN Monsoon 2023 mini project 2
 
 - You are free to delete these instructions and add your report before submitting. 
 
-### testcase
-1. for `sigalarm`: nested handlers // not valid as reentrant calls are not allowed
+## Implementation
+1. for MLFQ scheduling, I add a field to `struct proc` that will indicate the priority queue number (0 to 3), another field to track ticks used in current time slice, and another field to track waiting time (ticks)
+--- `proc.h` : adding new fields, and macros to store time slices and waiting time limits per PQ.
+--- `proc.c` : `allocproc()` : adding new processes to the end of PQ0.
+                `scheduler()` : if currently running process has exhausted time slice or relinquished control (say for i/o), search for a process in the highest non-empty PQ (in RR fashion) to run. Reset wait time to 0 for the selected process.
+--- `trap.h` : `usertrap()` : update ticks (running ticks if it is running and waiting ticks (iterate over the `proc` array for this) if waiting (runnable)). push a process to next higher PQ if wait time exceeds limit, and reset wait time to 0.
+
 
 
 ## Assumptions
 1. For `sigalarm`, the `handler` function will have no arguments defined (taking a hint from the `alaramtest.c` file). I have allowed the return type to be anything (by using `void`) but it will not be used anyway.
 2. For `sigalarm`, to disable any alarm handling, pass any negative value to the `handler` or `interval` argument of `sigalarm()`
 3. For scheduling, to change the policy, do a `make clean` before changing the value of the `SCHEDULER` flag in the next `make`.
+4. For FCFS scheduling, note that on running `usertests`, the test `preempt` will not work (if `CPUS` <= 3) as FCFS requires preemption to be disabled.
+5. Because we're using macros to change the scheduler, I am using the `touch` command to procide for the `make` command to change the files using those macros, so as to to not have to do a `make clean` before changing the macro.
