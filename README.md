@@ -21,6 +21,5 @@ OSN Monsoon 2023 mini project 2
 ## Assumptions
 1. For `sigalarm`, the `handler` function will have no arguments defined (taking a hint from the `alaramtest.c` file). I have allowed the return type to be anything (by using `void`) but it will not be used anyway.
 2. For `sigalarm`, to disable any alarm handling, pass any negative value to the `handler` or `interval` argument of `sigalarm()`
-3. For scheduling, to change the policy, do a `make clean` before changing the value of the `SCHEDULER` flag in the next `make`.
-4. For FCFS scheduling, note that on running `usertests`, the test `preempt` will not work (if `CPUS` <= 3) as FCFS requires preemption to be disabled.
-5. Because we're using macros to change the scheduler, I am using the `touch` command to procide for the `make` command to change the files using those macros, so as to to not have to do a `make clean` before changing the macro.
+3. For FCFS scheduling, note that on running `usertests`, the test `preempt` will not work (if `CPUS` <= 3) as FCFS requires preemption to be disabled. This is because once the parent process (the process for the `preempt` test) goes to sleep during the `read` syscall, it will never be woken up again, and its three children will be scheduled to run on the CPUS. Since the parent never becomes runnable again, it is never scheduled even though it is the oldest one (least creation time), so it can never kill the children and the test won't pass as the children essentially loop forever.
+4. Because we're using macros to change the scheduler, I am using the `touch` command to procide for the `make` command to change the files using those macros, so as to to not have to do a `make clean` before changing the macro.
