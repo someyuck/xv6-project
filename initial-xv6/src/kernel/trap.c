@@ -6,6 +6,8 @@
 #include "proc.h"
 #include "defs.h"
 
+int AgingTimes[3] = {PQ1AgingTime, PQ2AgingTime, PQ3AgingTime};
+
 struct spinlock tickslock;
 uint ticks;
 
@@ -81,15 +83,38 @@ void usertrap(void)
   // give up the CPU if this is a timer interrupt. -- yield only if FCFS is not used
   if (which_dev == 2)
   {
-    if(p->handler >= 0)
+    // if MLFQ is used:
+    #ifdef MLFQ 
+    // update waiting time of runnable processes 
+    for (int i = 0 ; i < NPROC; i++) // add assumption of order of pushing processes
+    {
+      acquire(&proc[i].lock);
+      if (proc[i].state == RUNNABLE && &proc[i] != p) // p would have state RUNNING so no need to check
+      {
+        proc[i].waitingTicks++;
+        // push process to end of next higher PQ if it waits more than its aging limit
+        if (proc[i].priorityQueue > 0 && proc[i].waitingTicks >= AgingTimes[proc[i].priorityQueue - 1])
+        {
+          NumProcsInPQ[proc[i].priorityQueue]--;
+          proc[i].priorityQueue--;
+          NumProcsInPQ[proc[i].priorityQueue]++;
+          proc[i].waitingTicks = 0;
+          proc[i].curSliceRunTicks = 0;
+        }
+      }
+      release(&proc[i].lock);
+    }
+    #endif
+
+    if (p->handler >= 0)
     {
       // update process' CPU ticks since last call to alarm handler
-      if(p->alarmInterval >= 0)
+      if (p->alarmInterval >= 0)
         p->ticksElapsed = (p->ticksElapsed + 1) % p->alarmInterval;
       else
         p->ticksElapsed = p->ticksElapsed + 1;
 
-      if(p->ticksElapsed == 0 && p->isAlarmOn == 0) // call alarm handler function
+      if (p->ticksElapsed == 0 && p->isAlarmOn == 0) // call alarm handler function
       {
         p->isAlarmOn = 1;
         p->breakoffTF = kalloc(); // save current trapframe to restore in sigreturn()

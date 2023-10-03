@@ -124,6 +124,27 @@ struct proc
   int isAlarmOn;               // if alarm handler is being executed
   uint ticksElapsed;           // number of ticks since last execution of alarm handler: negative if handler pointer is NULL
   struct trapframe *breakoffTF; // trapframe when execution is broken off
+
+  #ifdef MLFQ
+  int priorityQueue;
+  int curSliceRunTicks;
+  int waitingTicks;
+  int IndexInPQ; // 0 indexed
+  int isPreempted;
+  #endif
 };
+
+#define PQ0Slice 1
+#define PQ1Slice 3
+#define PQ2Slice 9
+#define PQ3Slice 15
+
+#define PQ1AgingTime 5 
+#define PQ2AgingTime 15 
+#define PQ3AgingTime 25 
+
+extern int PQSlices[4];
+extern int NumProcsInPQ[4]; // contains the number of processes currently in each PQ.
+extern int AgingTimes[3];
 
 extern struct proc proc[NPROC];

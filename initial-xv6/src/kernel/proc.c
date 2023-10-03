@@ -10,6 +10,9 @@ struct cpu cpus[NCPU];
 
 struct proc proc[NPROC];
 
+int PQSlices[4] = {PQ0Slice, PQ1Slice, PQ2Slice, PQ3Slice};
+int NumProcsInPQ[4] = {0, 0, 0, 0};
+
 struct proc *initproc;
 
 int nextpid = 1;
@@ -157,6 +160,16 @@ found:
   p->ticksElapsed = 0; // grows +ve, modulo p->alarmInterval if handler >= 0
   p->breakoffTF = 0; // 0 if no handler
   p->isAlarmOn = 0;
+  
+  #ifdef MLFQ
+  p->priorityQueue = 0;
+  p->curSliceRunTicks = 0;
+  p->waitingTicks = 0;
+  p->IndexInPQ = NumProcsInPQ[p->priorityQueue]; // added to end of PQ0 (lazy addition)
+  NumProcsInPQ[p->priorityQueue]++;
+  p->isPreempted = 0;
+  #endif
+
   return p;
 }
 
@@ -188,6 +201,15 @@ freeproc(struct proc *p)
     kfree((void*)p->breakoffTF);
   p->breakoffTF = 0;
   p->isAlarmOn = 0;
+
+  #ifdef MLFQ
+  NumProcsInPQ[p->priorityQueue]--;
+  p->priorityQueue = 0;
+  p->curSliceRunTicks = 0;
+  p->waitingTicks = 0;
+  p->IndexInPQ = 0; // added to end of PQ0 (lazy addition)
+  p->isPreempted = 0;
+  #endif
 }
 
 // Create a user page table for a given process, with no user memory,
@@ -534,11 +556,92 @@ void scheduler(void)
     release(&oldest_p->lock);
 
     #elif defined(MLFQ)
-    printf("mlfq\n");
+    
+    int highestPQ;
 
+    for (p = proc; p < &proc[NPROC]; p++)
+    {
+      highestPQ = highestNonEmptyPQ();
+      
+      acquire(&p->lock);
+      if (p->state == RUNNABLE && p->priorityQueue == highestPQ)
+      {
+        release(&p->lock);
+
+        p->curSliceRunTicks = 0;
+        p->waitingTicks = 0;
+
+        while(1)
+        {
+          acquire(&p->lock);
+          if(p->state == RUNNABLE) // let it run
+          {
+            p->state = RUNNING;
+            c->proc = p;
+            swtch(&c->context, &p->context);
+            p->curSliceRunTicks++;
+            c->proc = 0;
+          }
+          if(p->state == SLEEPING) // gone for i/o
+          {
+            p->curSliceRunTicks = 0;
+            p->waitingTicks = 0;
+            release(&p->lock);
+            break;
+          }
+          release(&p->lock);
+          
+          highestPQ = highestNonEmptyPQ();
+          if(highestPQ == -1) // some BS happened, cleanup
+          {
+            p->curSliceRunTicks = 0;
+            p->waitingTicks = 0;
+            break;
+          }
+
+          if(p->priorityQueue > highestPQ) // some higher priority process has arrived
+          {
+            p->curSliceRunTicks = 0;
+            p->waitingTicks = 0;
+            break;
+          }
+          if(p->curSliceRunTicks >= PQSlices[p->priorityQueue]) // used up its time slice
+          {
+            p->curSliceRunTicks = 0;
+            p->waitingTicks = 0;
+            if(p->priorityQueue > 3) // demote to next lower PQ
+            {
+              NumProcsInPQ[p->priorityQueue]--;
+              p->priorityQueue++;
+              NumProcsInPQ[p->priorityQueue]++;
+            }
+            break;
+          }
+        }
+      }
+      else
+        release(&p->lock);
+    }
     #endif
   }
 }
+
+#ifdef MLFQ
+int highestNonEmptyPQ(void)
+{
+  int ans = -1;
+  for(int i = 0; i < NPROC; i++)
+  {
+    acquire(&proc[i].lock);
+    if ((proc[i].state == RUNNABLE || proc[i].state == RUNNING) && ((ans == -1) || proc[i].priorityQueue < ans))
+    {
+      ans = proc[i].priorityQueue;
+    }
+    release(&proc[i].lock);
+  }
+  return ans;
+}
+#endif
 
 // Switch to scheduler.  Must hold only p->lock
 // and have changed proc->state. Saves and restores
@@ -749,6 +852,9 @@ void procdump(void)
     else
       state = "???";
     printf("%d %s %s %d", p->pid, state, p->name, p->ctime);
+    #ifdef MLFQ
+    printf(" %d", p->priorityQueue);
+    #endif
     printf("\n");
   }
 }

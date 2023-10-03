@@ -16,6 +16,10 @@ OSN Monsoon 2023 mini project 2
                 `scheduler()` : if currently running process has exhausted time slice or relinquished control (say for i/o), search for a process in the highest non-empty PQ (in RR fashion) to run. Reset wait time to 0 for the selected process.
 --- `trap.h` : `usertrap()` : update ticks (running ticks if it is running and waiting ticks (iterate over the `proc` array for this) if waiting (runnable)). push a process to next higher PQ if wait time exceeds limit, and reset wait time to 0.
 
+-- if the current highest non-empty process queue is the same as that of the process that was running in the previous tick, the process is allowed to run for the next tick too (unless it exhausts its time slice).
+-- if there is a higher proces queue with a runnable process, the current process is preempted and the former is scheduled.
+-- if the current process has exhausted its time slice, it is preempted, pushed down to the next lower priority queue, and the scheduler selects the next highest-priority queue process. (handled in `usertrap()`)
+-- if the current process goes for i/o (changes state to SLEEPING), it is preempted but kept in the same priority queue, and the next highest-priority queue process is scheduled.
 
 
 ## Assumptions
