@@ -139,9 +139,9 @@ struct proc
 #define PQ2Slice 9
 #define PQ3Slice 15
 
-#define PQ1AgingTime 5 
-#define PQ2AgingTime 15 
-#define PQ3AgingTime 25 
+#define PQ1AgingTime 30 
+#define PQ2AgingTime 30 
+#define PQ3AgingTime 30 
 
 extern int PQSlices[4];
 extern int NumProcsInPQ[4]; // contains the number of processes currently in each PQ.

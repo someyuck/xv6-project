@@ -558,11 +558,10 @@ void scheduler(void)
     #elif defined(MLFQ)
     
     int highestPQ;
-
     for (p = proc; p < &proc[NPROC]; p++)
     {
       highestPQ = highestNonEmptyPQ();
-      
+
       acquire(&p->lock);
       if (p->state == RUNNABLE && p->priorityQueue == highestPQ)
       {
@@ -582,15 +581,8 @@ void scheduler(void)
             p->curSliceRunTicks++;
             c->proc = 0;
           }
-          if(p->state == SLEEPING) // gone for i/o
-          {
-            p->curSliceRunTicks = 0;
-            p->waitingTicks = 0;
-            release(&p->lock);
-            break;
-          }
           release(&p->lock);
-          
+
           highestPQ = highestNonEmptyPQ();
           if(highestPQ == -1) // some BS happened, cleanup
           {
@@ -598,25 +590,44 @@ void scheduler(void)
             p->waitingTicks = 0;
             break;
           }
-
-          if(p->priorityQueue > highestPQ) // some higher priority process has arrived
+          
+          // the below two cases of preemption (and demotion) will hold for both runnable and sleeping (those gone for i/o) processes
+          if(p->priorityQueue > highestPQ && p->curSliceRunTicks < PQSlices[p->priorityQueue]) // some other higher priority process has arrived, but it didn't use up its whole slice
           {
             p->curSliceRunTicks = 0;
             p->waitingTicks = 0;
             break;
           }
-          if(p->curSliceRunTicks >= PQSlices[p->priorityQueue]) // used up its time slice
+          else if(p->curSliceRunTicks >= PQSlices[p->priorityQueue]) // used up its time slice (and/or an higher priority process has arrived)
           {
             p->curSliceRunTicks = 0;
             p->waitingTicks = 0;
-            if(p->priorityQueue > 3) // demote to next lower PQ
+            if(p->priorityQueue < 3) // demote to next lower PQ
             {
               NumProcsInPQ[p->priorityQueue]--;
               p->priorityQueue++;
               NumProcsInPQ[p->priorityQueue]++;
+
+              // code for mlfqtest.c
+              if(strncmp(p->name, "mlfqtest", 16) == 0)
+              {
+                acquire(&p->lock);
+                printf("%d %d %d demoted\n", ticks, p->pid, p->priorityQueue);
+                release(&p->lock);
+              }
             }
             break;
           }
+
+          acquire(&p->lock);
+          if(p->state != RUNNABLE) // gone for i/o
+          {
+            p->curSliceRunTicks = 0;
+            p->waitingTicks = 0;
+            release(&p->lock);
+            break;
+          }
+          release(&p->lock);
         }
       }
       else

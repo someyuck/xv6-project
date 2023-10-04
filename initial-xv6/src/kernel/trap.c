@@ -84,7 +84,16 @@ void usertrap(void)
   if (which_dev == 2)
   {
     // if MLFQ is used:
-    #ifdef MLFQ 
+    #ifdef MLFQ
+
+    // code for mlfqtest.c
+    if(strncmp(p->name, "mlfqtest", 16) == 0)
+    {
+      acquire(&p->lock);
+      printf("%d %d %d run\n", ticks, p->pid, p->priorityQueue);
+      release(&p->lock);
+    }
+
     // update waiting time of runnable processes 
     for (int i = 0 ; i < NPROC; i++) // add assumption of order of pushing processes
     {
@@ -95,11 +104,19 @@ void usertrap(void)
         // push process to end of next higher PQ if it waits more than its aging limit
         if (proc[i].priorityQueue > 0 && proc[i].waitingTicks >= AgingTimes[proc[i].priorityQueue - 1])
         {
+          // code for mlfqtest.c
+          if(strncmp(proc[i].name, "mlfqtest", 16) == 0)
+            printf("%d %d %d before promotion\n", ticks-1, proc[i].pid, proc[i].priorityQueue);
+
           NumProcsInPQ[proc[i].priorityQueue]--;
           proc[i].priorityQueue--;
           NumProcsInPQ[proc[i].priorityQueue]++;
           proc[i].waitingTicks = 0;
           proc[i].curSliceRunTicks = 0;
+
+          // code for mlfqtest.c
+          if(strncmp(proc[i].name, "mlfqtest", 16) == 0)
+            printf("%d %d %d after promotion\n", ticks, proc[i].pid, proc[i].priorityQueue);
         }
       }
       release(&proc[i].lock);
