@@ -15,6 +15,7 @@ I've modified kernel/trap.c (lines 89 to 96, 107 to 109, and 117 to 119) and ker
 the PID and priority queue number of the process that was running at that tick.
 
 Copy the output data and enter it into a file ../../mlfqAnalysis.txt (create it if not present)
+Also remove the first line, as it represents the process of this program and not the 5 children it creates, which we want to analyse.
 Then run ../..mlfqtest.py
 */
 

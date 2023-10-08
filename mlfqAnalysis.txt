@@ -1,191 +1,182 @@
-94 4 0 run
-94 4 1 demoted
-95 5 0 run
-95 5 1 demoted
-96 6 0 run
-96 6 1 demoted
-97 7 0 run
-97 7 1 demoted
-98 8 0 run
-98 8 1 demoted
-99 4 1 run
-100 4 1 run
-101 4 1 run
-101 4 2 demoted
-102 5 1 run
-103 5 1 run
-104 5 1 run
-104 5 2 demoted
-105 6 1 run
-106 6 1 run
-107 6 1 run
-107 6 2 demoted
-108 7 1 run
-109 7 1 run
-110 7 1 run
-110 7 2 demoted
-111 8 1 run
-112 8 1 run
-113 8 1 run
-113 8 2 demoted
-114 4 2 run
-115 4 2 run
-116 4 2 run
-117 4 2 run
-118 4 2 run
-119 4 2 run
-120 4 2 run
-121 4 2 run
-122 4 2 run
-122 4 3 demoted
-123 5 2 run
-124 5 2 run
-125 5 2 run
-126 5 2 run
-127 5 2 run
-128 5 2 run
-129 5 2 run
-130 5 2 run
-131 5 2 run
-131 5 3 demoted
-132 6 2 run
-133 6 2 run
-134 6 2 run
-135 6 2 run
-136 6 2 run
-137 6 2 run
-138 6 2 run
-139 6 2 run
-140 6 2 run
-139 7 2 before promotion
-140 7 1 after promotion
-140 6 3 demoted
-141 7 1 run
-142 7 1 run
-143 7 1 run
-142 8 2 before promotion
-143 8 1 after promotion
-143 7 2 demoted
-144 8 1 run
-145 8 1 run
-146 8 1 run
-146 8 2 demoted
-147 7 2 run
-148 7 2 run
-149 7 2 run
-150 7 2 run
-151 7 2 run
-152 7 2 run
-151 4 3 before promotion
-152 4 2 after promotion
-153 7 2 run
-154 7 2 run
-155 7 2 run
-155 7 3 demoted
-156 8 2 run
-157 8 2 run
-158 8 2 run
-159 8 2 run
-160 8 2 run
-161 8 2 run
-160 5 3 before promotion
-161 5 2 after promotion
-162 8 2 run
-163 8 2 run
-164 8 2 run
-164 8 3 demoted
-165 4 2 run
-166 4 2 run
-167 4 2 run
-168 4 2 run
-169 4 2 run
-170 4 2 run
-169 6 3 before promotion
-170 6 2 after promotion
-171 4 2 run
-172 4 2 run
-173 4 2 run
-173 4 3 demoted
-174 5 2 run
-175 5 2 run
-176 5 2 run
-177 5 2 run
-178 5 2 run
-179 5 2 run
-180 5 2 run
-181 5 2 run
-182 5 2 run
-182 5 3 demoted
-183 6 2 run
-184 6 2 run
-185 6 2 run
-184 7 3 before promotion
-185 7 2 after promotion
-186 6 2 run
-187 6 2 run
-188 6 2 run
-189 6 2 run
-190 6 2 run
-191 6 2 run
-191 6 3 demoted
-192 7 2 run
-193 7 2 run
-194 7 2 run
-193 8 3 before promotion
-194 8 2 after promotion
-195 7 2 run
-196 7 2 run
-197 7 2 run
-198 7 2 run
-199 7 2 run
-200 7 2 run
-200 7 3 demoted
-201 8 2 run
-202 8 2 run
-203 8 2 run
-202 4 3 before promotion
-203 4 2 after promotion
-204 8 2 run
-205 8 2 run
-206 8 2 run
-207 8 2 run
-208 8 2 run
-209 8 2 run
-209 8 3 demoted
-210 4 2 run
-211 4 2 run
-212 4 2 run
-211 5 3 before promotion
-212 5 2 after promotion
-213 4 2 run
-214 4 2 run
-215 4 2 run
-216 4 2 run
-217 5 2 run
-218 5 2 run
-219 5 2 run
-220 5 2 run
-221 5 2 run
-220 6 3 before promotion
-221 6 2 after promotion
-222 5 2 run
-223 5 2 run
-224 6 2 run
-225 6 2 run
-226 6 2 run
-227 6 2 run
-228 6 2 run
-229 6 2 run
-230 6 2 run
-229 7 3 before promotion
-230 7 2 after promotion
-232 7 2 run
-233 7 2 run
-234 7 2 run
-235 7 2 run
-236 8 3 run
-237 8 3 run
-238 8 3 run
-239 8 3 run
-240 8 3 run
-241 8 3 run
+3474 6679 0 run
+3474 6679 1 demoted
+3475 6680 0 run
+3475 6680 1 demoted
+3476 6681 0 run
+3476 6681 1 demoted
+3477 6682 0 run
+3477 6682 1 demoted
+3478 6683 0 run
+3478 6683 1 demoted
+3479 6679 1 run
+3480 6679 1 run
+3481 6679 1 run
+3481 6679 2 demoted
+3482 6680 1 run
+3483 6680 1 run
+3484 6680 1 run
+3484 6680 2 demoted
+3485 6681 1 run
+3486 6681 1 run
+3487 6681 1 run
+3487 6681 2 demoted
+3488 6682 1 run
+3489 6682 1 run
+3490 6682 1 run
+3490 6682 2 demoted
+3491 6683 1 run
+3492 6683 1 run
+3493 6683 1 run
+3493 6683 2 demoted
+3494 6679 2 run
+3495 6679 2 run
+3496 6679 2 run
+3497 6679 2 run
+3498 6679 2 run
+3499 6679 2 run
+3500 6679 2 run
+3501 6679 2 run
+3502 6679 2 run
+3502 6679 3 demoted
+3503 6680 2 run
+3504 6680 2 run
+3505 6680 2 run
+3506 6680 2 run
+3507 6680 2 run
+3508 6680 2 run
+3509 6680 2 run
+3510 6680 2 run
+3511 6680 2 run
+3511 6680 3 demoted
+3512 6681 2 run
+3513 6681 2 run
+3514 6681 2 run
+3515 6681 2 run
+3516 6681 2 run
+3517 6681 2 run
+3518 6681 2 run
+3519 6681 2 run
+3520 6681 2 run
+3519 6682 2 before promotion
+3520 6682 1 after promotion
+3520 6681 3 demoted
+3521 6682 1 run
+3522 6682 1 run
+3523 6682 1 run
+3522 6683 2 before promotion
+3523 6683 1 after promotion
+3523 6682 2 demoted
+3524 6683 1 run
+3525 6683 1 run
+3526 6683 1 run
+3526 6683 2 demoted
+3527 6682 2 run
+3528 6682 2 run
+3529 6682 2 run
+3530 6682 2 run
+3531 6682 2 run
+3532 6682 2 run
+3531 6679 3 before promotion
+3532 6679 2 after promotion
+3533 6682 2 run
+3534 6682 2 run
+3535 6682 2 run
+3535 6682 3 demoted
+3536 6683 2 run
+3537 6683 2 run
+3538 6683 2 run
+3539 6683 2 run
+3540 6683 2 run
+3541 6683 2 run
+3540 6680 3 before promotion
+3541 6680 2 after promotion
+3542 6683 2 run
+3543 6683 2 run
+3544 6683 2 run
+3544 6683 3 demoted
+3545 6679 2 run
+3546 6679 2 run
+3547 6679 2 run
+3548 6679 2 run
+3549 6679 2 run
+3550 6679 2 run
+3549 6681 3 before promotion
+3550 6681 2 after promotion
+3551 6679 2 run
+3552 6679 2 run
+3553 6679 2 run
+3553 6679 3 demoted
+3554 6680 2 run
+3555 6680 2 run
+3556 6680 2 run
+3557 6680 2 run
+3558 6680 2 run
+3559 6680 2 run
+3560 6680 2 run
+3561 6680 2 run
+3562 6680 2 run
+3562 6680 3 demoted
+3563 6681 2 run
+3564 6681 2 run
+3565 6681 2 run
+3564 6682 3 before promotion
+3565 6682 2 after promotion
+3566 6681 2 run
+3567 6681 2 run
+3568 6681 2 run
+3569 6681 2 run
+3570 6681 2 run
+3571 6681 2 run
+3571 6681 3 demoted
+3572 6682 2 run
+3573 6682 2 run
+3574 6682 2 run
+3573 6683 3 before promotion
+3574 6683 2 after promotion
+3575 6682 2 run
+3576 6682 2 run
+3577 6682 2 run
+3578 6682 2 run
+3579 6682 2 run
+3580 6682 2 run
+3580 6682 3 demoted
+3581 6683 2 run
+3582 6683 2 run
+3583 6683 2 run
+3582 6679 3 before promotion
+3583 6679 2 after promotion
+3584 6683 2 run
+3585 6683 2 run
+3586 6683 2 run
+3587 6683 2 run
+3588 6683 2 run
+3589 6683 2 run
+3589 6683 3 demoted
+3590 6679 2 run
+3591 6679 2 run
+3592 6679 2 run
+3591 6680 3 before promotion
+3592 6680 2 after promotion
+3593 6679 2 run
+3594 6679 2 run
+3595 6679 2 run
+3596 6680 2 run
+3597 6680 2 run
+3598 6680 2 run
+3599 6680 2 run
+3600 6680 2 run
+3601 6680 2 run
+3600 6681 3 before promotion
+3601 6681 2 after promotion
+3602 6681 2 run
+3603 6681 2 run
+3604 6681 2 run
+3605 6681 2 run
+3606 6681 2 run
+3607 6681 2 run
+3608 6682 3 run
+3609 6682 3 run
+3610 6682 3 run
+3611 6683 3 run
+3612 6683 3 run
+3613 6683 3 run

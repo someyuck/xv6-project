@@ -22,12 +22,6 @@ for x in temp_pids:
         pids.append(x)
 pids.sort()
 
-# other pids may have entered (for instance the pid of the mlfqtest process)
-# for i in range(len(rawData)): 
-#     if rawData[i][1] not in pids:
-#         print("hey")
-#         del rawData[i]
-
 processes = list()
 for i in range(len(pids)):
     processes.append(list())
@@ -45,8 +39,6 @@ for i in range(len(rawData)):
 # think Y : queue number, X : tick number (need not start from 0)
 
 def makePlot(processes: list[list[tuple[int, int]]]):
-    # plt.figure(figsize = (150, 75))
-
     for proc in processes:
         ticks = [x[0] for x in proc]
         pQs = [x[1] for x in proc]
@@ -60,7 +52,7 @@ def makePlot(processes: list[list[tuple[int, int]]]):
     plt.xlabel("CPU Ticks")
     plt.ylabel("Priority Queue Number")
     plt.title("MLFQ Analysis with aging time 30s")
-    plt.savefig("aging50.png")
+    plt.savefig("aging30.png")
     plt.show()
 
 makePlot(processes)
