@@ -98,7 +98,7 @@ void usertrap(void)
     for (int i = 0 ; i < NPROC; i++) // add assumption of order of pushing processes
     {
       acquire(&proc[i].lock);
-      if (proc[i].state == RUNNABLE && &proc[i] != p) // p would have state RUNNING so no need to check
+      if (proc[i].state == RUNNABLE && &proc[i] != p) 
       {
         proc[i].waitingTicks++;
         // push process to end of next higher PQ if it waits more than its aging limit
@@ -108,9 +108,7 @@ void usertrap(void)
           if(strncmp(proc[i].name, "mlfqtest", 16) == 0)
             printf("%d %d %d before promotion\n", ticks-1, proc[i].pid, proc[i].priorityQueue);
 
-          NumProcsInPQ[proc[i].priorityQueue]--;
           proc[i].priorityQueue--;
-          NumProcsInPQ[proc[i].priorityQueue]++;
           proc[i].waitingTicks = 0;
           proc[i].curSliceRunTicks = 0;
 

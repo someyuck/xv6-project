@@ -129,8 +129,6 @@ struct proc
   int priorityQueue;
   int curSliceRunTicks;
   int waitingTicks;
-  int IndexInPQ; // 0 indexed
-  int isPreempted;
   #endif
 };
 
@@ -144,7 +142,6 @@ struct proc
 #define PQ3AgingTime 30 
 
 extern int PQSlices[4];
-extern int NumProcsInPQ[4]; // contains the number of processes currently in each PQ.
 extern int AgingTimes[3];
 
 extern struct proc proc[NPROC];

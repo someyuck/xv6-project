@@ -11,7 +11,6 @@ struct cpu cpus[NCPU];
 struct proc proc[NPROC];
 
 int PQSlices[4] = {PQ0Slice, PQ1Slice, PQ2Slice, PQ3Slice};
-int NumProcsInPQ[4] = {0, 0, 0, 0};
 
 struct proc *initproc;
 
@@ -165,9 +164,6 @@ found:
   p->priorityQueue = 0;
   p->curSliceRunTicks = 0;
   p->waitingTicks = 0;
-  p->IndexInPQ = NumProcsInPQ[p->priorityQueue]; // added to end of PQ0 (lazy addition)
-  NumProcsInPQ[p->priorityQueue]++;
-  p->isPreempted = 0;
   #endif
 
   return p;
@@ -203,12 +199,9 @@ freeproc(struct proc *p)
   p->isAlarmOn = 0;
 
   #ifdef MLFQ
-  NumProcsInPQ[p->priorityQueue]--;
   p->priorityQueue = 0;
   p->curSliceRunTicks = 0;
   p->waitingTicks = 0;
-  p->IndexInPQ = 0; // added to end of PQ0 (lazy addition)
-  p->isPreempted = 0;
   #endif
 }
 
@@ -528,14 +521,14 @@ void scheduler(void)
     #elif defined(FCFS)
     
     struct proc *oldest_p = 0;
-    // find the process with least ctime (oldest created runnable/sleeping (waiting for i/o) process)
+    // find the process with least ctime (oldest created runnable process)
     for (p = proc; p < &proc[NPROC]; p++)
     {
       acquire(&p->lock);
       if((p->state == RUNNABLE) && (oldest_p == 0 || p->ctime < oldest_p->ctime))
         oldest_p = p;
       release(&p->lock);
-    } 
+    }
     if(oldest_p == 0) // no process found to run
       continue;
 
@@ -604,9 +597,7 @@ void scheduler(void)
             p->waitingTicks = 0;
             if(p->priorityQueue < 3) // demote to next lower PQ
             {
-              NumProcsInPQ[p->priorityQueue]--;
               p->priorityQueue++;
-              NumProcsInPQ[p->priorityQueue]++;
 
               // code for mlfqtest.c
               if(strncmp(p->name, "mlfqtest", 16) == 0)

@@ -1,182 +1,181 @@
-3474 6679 0 run
-3474 6679 1 demoted
-3475 6680 0 run
-3475 6680 1 demoted
-3476 6681 0 run
-3476 6681 1 demoted
-3477 6682 0 run
-3477 6682 1 demoted
-3478 6683 0 run
-3478 6683 1 demoted
-3479 6679 1 run
-3480 6679 1 run
-3481 6679 1 run
-3481 6679 2 demoted
-3482 6680 1 run
-3483 6680 1 run
-3484 6680 1 run
-3484 6680 2 demoted
-3485 6681 1 run
-3486 6681 1 run
-3487 6681 1 run
-3487 6681 2 demoted
-3488 6682 1 run
-3489 6682 1 run
-3490 6682 1 run
-3490 6682 2 demoted
-3491 6683 1 run
-3492 6683 1 run
-3493 6683 1 run
-3493 6683 2 demoted
-3494 6679 2 run
-3495 6679 2 run
-3496 6679 2 run
-3497 6679 2 run
-3498 6679 2 run
-3499 6679 2 run
-3500 6679 2 run
-3501 6679 2 run
-3502 6679 2 run
-3502 6679 3 demoted
-3503 6680 2 run
-3504 6680 2 run
-3505 6680 2 run
-3506 6680 2 run
-3507 6680 2 run
-3508 6680 2 run
-3509 6680 2 run
-3510 6680 2 run
-3511 6680 2 run
-3511 6680 3 demoted
-3512 6681 2 run
-3513 6681 2 run
-3514 6681 2 run
-3515 6681 2 run
-3516 6681 2 run
-3517 6681 2 run
-3518 6681 2 run
-3519 6681 2 run
-3520 6681 2 run
-3519 6682 2 before promotion
-3520 6682 1 after promotion
-3520 6681 3 demoted
-3521 6682 1 run
-3522 6682 1 run
-3523 6682 1 run
-3522 6683 2 before promotion
-3523 6683 1 after promotion
-3523 6682 2 demoted
-3524 6683 1 run
-3525 6683 1 run
-3526 6683 1 run
-3526 6683 2 demoted
-3527 6682 2 run
-3528 6682 2 run
-3529 6682 2 run
-3530 6682 2 run
-3531 6682 2 run
-3532 6682 2 run
-3531 6679 3 before promotion
-3532 6679 2 after promotion
-3533 6682 2 run
-3534 6682 2 run
-3535 6682 2 run
-3535 6682 3 demoted
-3536 6683 2 run
-3537 6683 2 run
-3538 6683 2 run
-3539 6683 2 run
-3540 6683 2 run
-3541 6683 2 run
-3540 6680 3 before promotion
-3541 6680 2 after promotion
-3542 6683 2 run
-3543 6683 2 run
-3544 6683 2 run
-3544 6683 3 demoted
-3545 6679 2 run
-3546 6679 2 run
-3547 6679 2 run
-3548 6679 2 run
-3549 6679 2 run
-3550 6679 2 run
-3549 6681 3 before promotion
-3550 6681 2 after promotion
-3551 6679 2 run
-3552 6679 2 run
-3553 6679 2 run
-3553 6679 3 demoted
-3554 6680 2 run
-3555 6680 2 run
-3556 6680 2 run
-3557 6680 2 run
-3558 6680 2 run
-3559 6680 2 run
-3560 6680 2 run
-3561 6680 2 run
-3562 6680 2 run
-3562 6680 3 demoted
-3563 6681 2 run
-3564 6681 2 run
-3565 6681 2 run
-3564 6682 3 before promotion
-3565 6682 2 after promotion
-3566 6681 2 run
-3567 6681 2 run
-3568 6681 2 run
-3569 6681 2 run
-3570 6681 2 run
-3571 6681 2 run
-3571 6681 3 demoted
-3572 6682 2 run
-3573 6682 2 run
-3574 6682 2 run
-3573 6683 3 before promotion
-3574 6683 2 after promotion
-3575 6682 2 run
-3576 6682 2 run
-3577 6682 2 run
-3578 6682 2 run
-3579 6682 2 run
-3580 6682 2 run
-3580 6682 3 demoted
-3581 6683 2 run
-3582 6683 2 run
-3583 6683 2 run
-3582 6679 3 before promotion
-3583 6679 2 after promotion
-3584 6683 2 run
-3585 6683 2 run
-3586 6683 2 run
-3587 6683 2 run
-3588 6683 2 run
-3589 6683 2 run
-3589 6683 3 demoted
-3590 6679 2 run
-3591 6679 2 run
-3592 6679 2 run
-3591 6680 3 before promotion
-3592 6680 2 after promotion
-3593 6679 2 run
-3594 6679 2 run
-3595 6679 2 run
-3596 6680 2 run
-3597 6680 2 run
-3598 6680 2 run
-3599 6680 2 run
-3600 6680 2 run
-3601 6680 2 run
-3600 6681 3 before promotion
-3601 6681 2 after promotion
-3602 6681 2 run
-3603 6681 2 run
-3604 6681 2 run
-3605 6681 2 run
-3606 6681 2 run
-3607 6681 2 run
-3608 6682 3 run
-3609 6682 3 run
-3610 6682 3 run
-3611 6683 3 run
-3612 6683 3 run
-3613 6683 3 run
+26 4 0 run
+26 4 1 demoted
+27 5 0 run
+27 5 1 demoted
+28 6 0 run
+28 6 1 demoted
+29 7 0 run
+29 7 1 demoted
+30 8 0 run
+30 8 1 demoted
+31 4 1 run
+32 4 1 run
+33 4 1 run
+33 4 2 demoted
+34 5 1 run
+35 5 1 run
+36 5 1 run
+36 5 2 demoted
+37 6 1 run
+38 6 1 run
+39 6 1 run
+39 6 2 demoted
+40 7 1 run
+41 7 1 run
+42 7 1 run
+42 7 2 demoted
+43 8 1 run
+44 8 1 run
+45 8 1 run
+45 8 2 demoted
+46 4 2 run
+47 4 2 run
+48 4 2 run
+49 4 2 run
+50 4 2 run
+51 4 2 run
+52 4 2 run
+53 4 2 run
+54 4 2 run
+54 4 3 demoted
+55 5 2 run
+56 5 2 run
+57 5 2 run
+58 5 2 run
+59 5 2 run
+60 5 2 run
+61 5 2 run
+62 5 2 run
+63 5 2 run
+63 5 3 demoted
+64 6 2 run
+65 6 2 run
+66 6 2 run
+67 6 2 run
+68 6 2 run
+69 6 2 run
+70 6 2 run
+71 6 2 run
+72 6 2 run
+71 7 2 before promotion
+72 7 1 after promotion
+72 6 3 demoted
+73 7 1 run
+74 7 1 run
+75 7 1 run
+74 8 2 before promotion
+75 8 1 after promotion
+75 7 2 demoted
+76 8 1 run
+77 8 1 run
+78 8 1 run
+78 8 2 demoted
+79 7 2 run
+80 7 2 run
+81 7 2 run
+82 7 2 run
+83 7 2 run
+84 7 2 run
+83 4 3 before promotion
+84 4 2 after promotion
+85 7 2 run
+86 7 2 run
+87 7 2 run
+87 7 3 demoted
+88 8 2 run
+89 8 2 run
+90 8 2 run
+91 8 2 run
+92 8 2 run
+93 8 2 run
+92 5 3 before promotion
+93 5 2 after promotion
+94 8 2 run
+95 8 2 run
+96 8 2 run
+96 8 3 demoted
+97 4 2 run
+98 4 2 run
+99 4 2 run
+100 4 2 run
+101 4 2 run
+102 4 2 run
+101 6 3 before promotion
+102 6 2 after promotion
+103 4 2 run
+104 4 2 run
+105 4 2 run
+105 4 3 demoted
+106 5 2 run
+107 5 2 run
+108 5 2 run
+109 5 2 run
+110 5 2 run
+111 5 2 run
+112 5 2 run
+113 5 2 run
+114 5 2 run
+114 5 3 demoted
+115 6 2 run
+116 6 2 run
+117 6 2 run
+116 7 3 before promotion
+117 7 2 after promotion
+118 6 2 run
+119 6 2 run
+120 6 2 run
+121 6 2 run
+122 6 2 run
+123 6 2 run
+123 6 3 demoted
+124 7 2 run
+125 7 2 run
+126 7 2 run
+125 8 3 before promotion
+126 8 2 after promotion
+127 7 2 run
+128 7 2 run
+129 7 2 run
+130 7 2 run
+131 7 2 run
+132 7 2 run
+132 7 3 demoted
+133 8 2 run
+134 8 2 run
+135 8 2 run
+134 4 3 before promotion
+135 4 2 after promotion
+136 8 2 run
+137 8 2 run
+138 8 2 run
+139 8 2 run
+140 8 2 run
+141 8 2 run
+141 8 3 demoted
+142 4 2 run
+143 4 2 run
+144 4 2 run
+143 5 3 before promotion
+144 5 2 after promotion
+145 4 2 run
+146 4 2 run
+147 4 2 run
+148 5 2 run
+149 5 2 run
+150 5 2 run
+151 5 2 run
+152 5 2 run
+153 5 2 run
+152 6 3 before promotion
+153 6 2 after promotion
+154 6 2 run
+155 6 2 run
+156 6 2 run
+157 6 2 run
+158 6 2 run
+159 6 2 run
+160 7 3 run
+161 7 3 run
+162 7 3 run
+163 8 3 run
+164 8 3 run
