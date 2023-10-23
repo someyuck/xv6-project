@@ -159,6 +159,10 @@ sys_set_priority(void)
       ret = p->StaticPriority;
       p->StaticPriority = newPriority;
       p->RBI = DefaultRBI;
+      p->DynamicPriority = p->StaticPriority + p->RBI;
+      if (p->DynamicPriority > 100)
+        p->DynamicPriority = 100;
+      release(&p->lock);
       break;
     }
     release(&p->lock);

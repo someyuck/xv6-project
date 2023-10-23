@@ -122,7 +122,12 @@ void usertrap(void)
     #endif
 
     #ifdef PBS
-    // update WTime of RUNNABLE processes and STime of SLEEPING processes
+    // update WTime of RUNNABLE processes and STime of SLEEPING processes, and RTime of current process
+
+    p->RTime++;
+    updateRBI(p);
+    updateRBI(p);
+  
     for (int i = 0 ; i < NPROC; i++)
     {
       acquire(&proc[i].lock);
@@ -131,7 +136,8 @@ void usertrap(void)
       else if(proc[i].state == SLEEPING)
         proc[i].STime++;
 
-      updateRBIandDP(&proc[i]);
+      updateRBI(&proc[i]);
+      updateDP(&proc[i]);
       release(&proc[i].lock);
     }
     #endif

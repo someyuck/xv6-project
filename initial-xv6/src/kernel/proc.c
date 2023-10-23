@@ -683,6 +683,8 @@ void scheduler(void)
     acquire(&chosenOne->lock);
     if(chosenOne->state == RUNNABLE)
     {
+      chosenOne->RTime = 0;
+      chosenOne->schedCount++;
       chosenOne->state = RUNNING;
       c->proc = chosenOne;
       swtch(&c->context, &chosenOne->context);
@@ -711,12 +713,15 @@ int highestNonEmptyPQ(void)
 #endif
 
 #ifdef PBS
-void updateRBIandDP(struct proc *p)
+void updateRBI(struct proc *p)
 {
   p->RBI = (3 * p->RTime - p->STime - p->WTime) * 50 / (p->RTime + p->WTime + p->STime + 1);
   if (p->RBI < 0)
     p->RBI = 0;
+}
 
+void updateDP(struct proc *p)
+{
   p->DynamicPriority = p->StaticPriority + p-> RBI;
   if (p->DynamicPriority > 100)
     p->DynamicPriority = 100;
