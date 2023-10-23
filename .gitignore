@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 # *.tex *.dvi *.idx *.aux *.log *.ind *.ilg */*.o */*.d */*.asm */*.sym 
+=======
+>>>>>>> 94d8205 (added gitignore)
 **/*.tex
 **/*.dvi
 **/*.idx

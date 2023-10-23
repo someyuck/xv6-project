@@ -9,6 +9,7 @@ OSN Monsoon 2023 mini project 2
 
 - You are free to delete these instructions and add your report before submitting. 
 
+<<<<<<< HEAD
 # Scheduling Report (Specification 3)
 
 To view the report containing the description of my implementation of the two scheduling algorithms, the comparison of performance of all three schedulers and the MLFQ line graph for processes, click [here](/initial-xv6/README.md)
@@ -24,3 +25,11 @@ To view the report for the difference between my implementation of data sequenci
 4. Because we're using macros to change the scheduler, I am using the `touch` command to provide for the `make` command to change the files using those macros, so as to to not have to do a `make clean` before changing the scheduler (or the number of CPUS for that matter).
 5. I have modified `proc.c:procdump()` to print the creation time of the process as well, and the priority queue of the process if MLFQ is used as the scheduler.
 6. For MLFQ, I also demote a process if it went for I/O, just before using up its whole slice, and so the kernel only got back control after the whole time slice was used up.
+=======
+- Answer all the theoretical/analysis-based questions (for PBS scheduler and the concurrency questions) in a single `md `file.
+- You may delete these instructions and add your report before submitting. 
+
+# Assumptions
+1. If the scheduler is not set to `PBS` and the system call `set_priority` is used, or if `set_priority` is passed an invalid `pid` or `new_priority`, it will simply return -1.
+2. `In case two or more processes have the same priority, we use the number of times the process has been scheduled to break the tie.` I assume here that a process that has been scheduled for a lesser number of times will be chosen.
+>>>>>>> 94d8205 (added gitignore)
