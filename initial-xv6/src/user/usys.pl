@@ -40,3 +40,4 @@ entry("waitx");
 entry("getreadcount");
 entry("sigalarm");
 entry("sigreturn");
+entry("set_priority");

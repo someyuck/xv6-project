@@ -80,7 +80,7 @@ void usertrap(void)
   if (killed(p))
     exit(-1);
   
-  // give up the CPU if this is a timer interrupt. -- yield only if FCFS is not used
+  // give up the CPU if this is a timer interrupt. -- yield only if FCFS and PBS are not used
   if (which_dev == 2)
   {
     // if MLFQ is used:
@@ -121,6 +121,21 @@ void usertrap(void)
     }
     #endif
 
+    #ifdef PBS
+    // update WTime of RUNNABLE processes and STime of SLEEPING processes
+    for (int i = 0 ; i < NPROC; i++)
+    {
+      acquire(&proc[i].lock);
+      if(proc[i].state == RUNNABLE && &proc[i] != p)
+        proc[i].WTime++;
+      else if(proc[i].state == SLEEPING)
+        proc[i].STime++;
+
+      updateRBIandDP(&proc[i]);
+      release(&proc[i].lock);
+    }
+    #endif
+
     if (p->handler >= 0)
     {
       // update process' CPU ticks since last call to alarm handler
@@ -137,7 +152,7 @@ void usertrap(void)
         p->trapframe->epc = p->handler; // jump to handler
       }
     }
-    #ifndef FCFS
+    #if !defined(FCFS) && !defined(PBS)
     yield();
     #endif
   }
@@ -212,7 +227,7 @@ void kerneltrap()
   }
 
   // give up the CPU if this is a timer interrupt. -- only if FCFS is not used
-  #ifndef FCFS
+  #if !defined(FCFS) && !defined(PBS)
   if (which_dev == 2 && myproc() != 0 && myproc()->state == RUNNING)
     yield();
   #endif

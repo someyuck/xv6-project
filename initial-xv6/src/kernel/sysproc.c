@@ -136,3 +136,36 @@ uint64 sys_sigreturn(void)
   p->ticksElapsed = 0;
   return p->trapframe->a0;
 }
+
+uint64 
+sys_set_priority(void)
+{
+  uint64 pid;
+  uint64 newPriority;
+  argaddr(0, &pid);
+  argaddr(1, &newPriority);
+  if(pid <= 0 || newPriority < 0 || newPriority > 100)
+    return -1;
+
+  int ret = -1; // assumption
+  #ifdef PBS
+
+  struct proc *p;
+  for(p = proc; p < &proc[NPROC]; p++)
+  {
+    acquire(&p->lock);
+    if(p->pid == pid)
+    {
+      ret = p->StaticPriority;
+      p->StaticPriority = newPriority;
+      p->RBI = DefaultRBI;
+      break;
+    }
+    release(&p->lock);
+  }
+  if(newPriority < ret)
+    yield();
+  #endif
+
+  return ret;
+}

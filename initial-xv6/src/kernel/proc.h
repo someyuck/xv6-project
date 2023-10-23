@@ -130,7 +130,22 @@ struct proc
   int curSliceRunTicks;
   int waitingTicks;
   #endif
+
+  #ifdef PBS
+  int RTime;
+  int STime;
+  int WTime;
+  int RBI;
+  int StaticPriority;
+  int DynamicPriority;
+  int schedCount;
+  #endif
 };
+
+#define StaticPriorityLB 0
+#define StaticPriorityUB 100
+#define StaticPriorityDefault 50
+#define DefaultRBI 25
 
 #define PQ0Slice 1
 #define PQ1Slice 3

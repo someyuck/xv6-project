@@ -166,6 +166,16 @@ found:
   p->waitingTicks = 0;
   #endif
 
+  #ifdef PBS
+  p->StaticPriority = StaticPriorityDefault;
+  p->RBI = DefaultRBI;
+  p->DynamicPriority = 0; // check
+  p->RTime = 0;
+  p->STime = 0;
+  p->WTime = 0;
+  p->schedCount = 0;
+  #endif
+
   return p;
 }
 
@@ -202,6 +212,16 @@ freeproc(struct proc *p)
   p->priorityQueue = 0;
   p->curSliceRunTicks = 0;
   p->waitingTicks = 0;
+  #endif
+
+  #ifdef PBS
+  p->StaticPriority = 0;
+  p->RBI = 0;
+  p->DynamicPriority = 0;
+  p->RTime = 0;
+  p->STime = 0;
+  p->WTime = 0;
+  p->schedCount = 0;
   #endif
 }
 
@@ -624,6 +644,51 @@ void scheduler(void)
       else
         release(&p->lock);
     }
+
+    #elif defined(PBS)
+    // find the highest priority process after breaking all ties
+    struct proc *chosenOne = 0;
+
+    // first filter by DP
+    for(p = proc; p < &proc[NPROC]; p++)
+    {
+      acquire(&p->lock);
+      if(p->state == RUNNABLE && (chosenOne == 0 || p->DynamicPriority < chosenOne->DynamicPriority))
+        chosenOne = p;
+      release(&p->lock);
+    }
+    
+    if(chosenOne == 0) // no process found to run
+      continue;
+    
+    // now filter by schedCount
+    for(p = proc; p < &proc[NPROC]; p++)
+    {
+      acquire(&p->lock);
+      if(p->state == RUNNABLE && (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount < chosenOne->schedCount))
+        chosenOne = p;
+      release(&p->lock);
+    }
+
+    // finally filter by ctime
+    for(p = proc; p < &proc[NPROC]; p++)
+    {
+      acquire(&p->lock);
+      if(p->state == RUNNABLE && (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount == chosenOne->schedCount && p->ctime == chosenOne->ctime))
+        chosenOne = p;
+      release(&p->lock);
+    }
+
+    // schedule the process till completion (for now, change after they respond on doubts doc)
+    acquire(&chosenOne->lock);
+    if(chosenOne->state == RUNNABLE)
+    {
+      chosenOne->state = RUNNING;
+      c->proc = chosenOne;
+      swtch(&c->context, &chosenOne->context);
+      c->proc = 0;
+    }
+    release(&chosenOne->lock);
     #endif
   }
 }
@@ -642,6 +707,19 @@ int highestNonEmptyPQ(void)
     release(&proc[i].lock);
   }
   return ans;
+}
+#endif
+
+#ifdef PBS
+void updateRBIandDP(struct proc *p)
+{
+  p->RBI = (3 * p->RTime - p->STime - p->WTime) * 50 / (p->RTime + p->WTime + p->STime + 1);
+  if (p->RBI < 0)
+    p->RBI = 0;
+
+  p->DynamicPriority = p->StaticPriority + p-> RBI;
+  if (p->DynamicPriority > 100)
+    p->DynamicPriority = 100;
 }
 #endif
 

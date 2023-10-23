@@ -105,6 +105,7 @@ extern uint64 sys_waitx(void);
 extern uint64 sys_getreadcount(void);
 extern uint64 sys_sigalarm(void);
 extern uint64 sys_sigreturn(void);
+extern uint64 sys_set_priority(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -134,6 +135,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_getreadcount] sys_getreadcount,
 [SYS_sigalarm] sys_sigalarm,
 [SYS_sigreturn] sys_sigreturn,
+[SYS_set_priority] sys_set_priority,
 };
 
 void
