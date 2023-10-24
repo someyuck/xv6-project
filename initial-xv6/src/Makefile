@@ -143,6 +143,7 @@ UPROGS=\
     $U/_alarmtest\
     $U/_mlfqtest\
     $U/_setpriority\
+    $U/_pbstest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

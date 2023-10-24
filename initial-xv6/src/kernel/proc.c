@@ -169,7 +169,7 @@ found:
   #ifdef PBS
   p->StaticPriority = StaticPriorityDefault;
   p->RBI = DefaultRBI;
-  p->DynamicPriority = 0; // check
+  p->DynamicPriority = 75; // min(50 + 25, 100)
   p->RTime = 0;
   p->STime = 0;
   p->WTime = 0;
@@ -674,7 +674,7 @@ void scheduler(void)
     for(p = proc; p < &proc[NPROC]; p++)
     {
       acquire(&p->lock);
-      if(p->state == RUNNABLE && (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount == chosenOne->schedCount && p->ctime == chosenOne->ctime))
+      if(p->state == RUNNABLE && (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount == chosenOne->schedCount && p->ctime < chosenOne->ctime))
         chosenOne = p;
       release(&p->lock);
     }
@@ -684,6 +684,7 @@ void scheduler(void)
     if(chosenOne->state == RUNNABLE)
     {
       chosenOne->RTime = 0;
+      chosenOne->STime = 0; // should we?
       chosenOne->schedCount++;
       chosenOne->state = RUNNING;
       c->proc = chosenOne;

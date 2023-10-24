@@ -856,10 +856,10 @@ preempt(char *s)
   }
 
   close(pfds[1]);
-  // if(read(pfds[0], buf, sizeof(buf)) != 1){
-  //   printf("%s: preempt read error", s);
-  //   return;
-  // }
+  if(read(pfds[0], buf, sizeof(buf)) != 1){
+    printf("%s: preempt read error", s);
+    return;
+  }
   close(pfds[0]);
   printf("kill... ");
   kill(pid1);
