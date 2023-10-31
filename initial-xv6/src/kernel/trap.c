@@ -62,13 +62,69 @@ void usertrap(void)
 
     // an interrupt will change sepc, scause, and sstatus,
     // so enable only now that we're done with those registers.
-    intr_on();
+    intr_on(); 
 
     syscall();
   }
   else if ((which_dev = devintr()) != 0)
   {
     // ok
+    // handle page faults for CoW fork implementation
+    if(r_scause() == 15) // store/write page fault
+      // pgfaulthandler()
+    {
+      // STVAL has the faulting virtual address, meaning its value and its page needs to be checked.
+      // if the PTE is marked as CoW, create a copy and assign to p (faulting process) (just add PTE_W if refcount is only 1).
+      // else if its read-only (and not CoW), meaning it was never marked with PTE_W, kill the process
+
+      uint64 va = r_stval();
+      if(va < 0 || va >= MAXVA)
+      {
+        printf("usertrap: invalid virtual address\n");
+        setkilled(p);
+      }
+
+      pte_t *pte = walk(p->pagetable, va, 0);
+      if(pte == 0)
+      {
+        printf("usertrap: pte not present\n");
+        setkilled(p);
+      }
+      if(!(*pte & PTE_V))
+      {
+        printf("usertrap: page not present\n");
+        setkilled(p);
+      }
+      if(!(*pte & PTE_COW))
+      {
+        printf("usertrap: store attempt to read-only memory\n");
+        setkilled(p);
+      }
+
+      uint64 pa = PTE2PA(*pte);
+      if(getpgrefcount(&pa) == 1)
+      {
+        *pte |= PTE_W;
+        sfence_vma(); // flush the TLB
+      }
+      else
+      {
+        // allocate a new page and copy old page to this
+        char *new;
+        if((new = kalloc()) == 0)
+          panic("usertrap: kalloc");
+
+        uint64 flags = PTE_FLAGS(*pte);
+        memmove(new, (char*)pa, PGSIZE);
+        if(mappages(p->pagetable, va, PGSIZE, (uint64)new, flags | PTE_W | PTE_COW) != 0)
+          kfree(new);
+        else
+        {
+          decrpgref(&pa); // for old page
+          sfence_vma(); // flush the TLB
+        }
+      }
+    }
   }
   else
   {
@@ -132,7 +188,7 @@ void usertrap(void)
     if(strncmp(p->name, "pbstest", 16) == 0)
     {
       acquire(&p->lock);
-      printf("%d %d %d %d   %d %d %d %d\n", ticks, p->pid, p->StaticPriority, p->DynamicPriority, p->RBI, p->RTime, p->STime, p->WTime);
+      printf("%d %d %d %d   %d %d %d\n", ticks, p->pid, p->StaticPriority, p->DynamicPriority, p->RBI, p->RTime, p->STime, p->WTime);
       release(&p->lock);
     }
   

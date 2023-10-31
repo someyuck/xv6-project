@@ -187,6 +187,10 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
       uint64 pa = PTE2PA(*pte);
       kfree((void*)pa);
     }
+    // decrease reference count of the page
+    uint64 pa = PTE2PA(*pte);
+    decrpgref(&pa);
+
     *pte = 0;
   }
 }
@@ -296,6 +300,73 @@ uvmfree(pagetable_t pagetable, uint64 sz)
   freewalk(pagetable);
 }
 
+/*functions for the kernel-wide data structure to track reference counts to each physical page*/
+
+// structure for keeping track of each page's reference count. used for CoW fork
+#include "spinlock.h"
+struct pgref
+{
+  struct spinlock lock;
+  uint count;
+};
+
+struct pgref pgrefs[PHYSTOP / PGSIZE]; // used for CoW fork. free a page only if its refcount is zero
+
+void clearpgrefs() // set to zero, called in main()
+{
+  for(uint64 pa = 0; pa < PHYSTOP / PGSIZE; pa++)
+  {
+    acquire(&pgrefs[pa].lock);
+    pgrefs[pa].count = 0;
+    release(&pgrefs[pa].lock);
+  }
+}
+
+int getpgrefcount(void *pa)
+{
+  if(((uint64)pa % PGSIZE) != 0 || (uint64)pa >= PHYSTOP)
+    panic("isclearpgref");
+  int ret = 0;
+  acquire(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+  ret = pgrefs[*(uint64*)pa / PGSIZE].count;
+  release(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+
+  return ret;
+}
+
+void setpgref(void *pa) // set to one, called in kalloc()
+{
+  if(((uint64)pa % PGSIZE) != 0 || (uint64)pa >= PHYSTOP)
+    panic("setpgref");
+  
+  acquire(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+  pgrefs[*(uint64*)pa / PGSIZE].count = 1;
+  release(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+}
+
+void incrpgref(void *pa)
+{
+  if(((uint64)pa % PGSIZE) != 0 || (uint64)pa >= PHYSTOP)
+    panic("incrpgref");
+  
+  acquire(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+  pgrefs[*(uint64*)pa / PGSIZE].count++;
+  release(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+}
+
+void decrpgref(void *pa)
+{
+  if(((uint64)pa % PGSIZE) != 0 || (uint64)pa >= PHYSTOP)
+    panic("decrpgref");
+  
+  acquire(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+  pgrefs[*(uint64*)pa / PGSIZE].count--;
+  release(&pgrefs[*(uint64*)pa / PGSIZE].lock);
+
+  if(pgrefs[*(uint64*)pa / PGSIZE].count == 0) // free if zero
+    kfree(pa);
+}
+
 // Given a parent process's page table, copy
 // its memory into a child's page table.
 // Copies both the page table and the
@@ -308,7 +379,7 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
   pte_t *pte;
   uint64 pa, i;
   uint flags;
-  char *mem;
+  // char *mem;
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
@@ -317,11 +388,26 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
       panic("uvmcopy: page not present");
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto err;
-    memmove(mem, (char*)pa, PGSIZE);
-    if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
-      kfree(mem);
+
+    /* implementing CoW fork */
+    if(flags & PTE_W) // if page is read-only, keep it read-only
+    {
+      flags |= PTE_COW; // mark page as CoW for child
+      *pte |= PTE_COW; // and parent
+    }
+    flags &= ~PTE_W; // make page non-writeable for child
+    *pte &= ~PTE_W; // and for parent
+
+    sfence_vma(); // flush the TLB to reflect changes to parent's page table
+    incrpgref(&pa);
+    /* implementing CoW fork */
+
+    // if((mem = kalloc()) == 0)
+    //   goto err;
+    // memmove(mem, (char*)pa, PGSIZE);
+    // if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
+    if(mappages(new, i, PGSIZE, pa, flags) != 0){
+      // kfree(mem);
       goto err;
     }
   }
@@ -354,18 +440,68 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
   uint64 n, va0, pa0;
 
   while(len > 0){
+    pte_t *pte;
+
     va0 = PGROUNDDOWN(dstva);
     pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0)
+    pte = walk(pagetable, va0, 0);
+    if(pa0 == 0 || pte == 0)
       return -1;
-    n = PGSIZE - (dstva - va0);
-    if(n > len)
-      n = len;
-    memmove((void *)(pa0 + (dstva - va0)), src, n);
 
-    len -= n;
-    src += n;
-    dstva = va0 + PGSIZE;
+    /* code added for CoW fork */
+    if(!(*pte & PTE_V))
+      return -1;
+    if(*pte & PTE_W) // simply let it write
+    {
+      n = PGSIZE - (dstva - va0);
+      if(n > len)
+        n = len;
+      memmove((void *)(pa0 + (dstva - va0)), src, n);
+
+      len -= n;
+      src += n;
+      dstva = va0 + PGSIZE;
+      continue;
+    }
+    if(!(*pte & PTE_COW))
+      return -1;
+
+    // "store page fault"
+    if(getpgrefcount(&pa0) == 1)
+    {
+      *pte |= PTE_W;
+      sfence_vma(); // flush the TLB
+    }
+    else
+    {
+      // allocate a new page and copy old page to this
+      char *new;
+      if((new = kalloc()) == 0)
+        panic("copyout: kalloc");
+
+      uint64 flags = PTE_FLAGS(*pte);
+      memmove(new, (char*)pa0, PGSIZE);
+
+      n = PGSIZE - (dstva - va0);
+      if(n > len)
+        n = len;
+      memmove((void *)(new + (dstva - va0)), src, n);
+      len -= n;
+      src += n;
+      dstva = va0 + PGSIZE;
+
+      if(mappages(pagetable, va0, PGSIZE, (uint64)new, flags | PTE_W | PTE_COW) != 0)
+      {
+        kfree(new);
+        return -1;
+      }
+      else
+      {
+        decrpgref(&pa0); // for old page
+        sfence_vma(); // flush the TLB
+      }
+    }
+    /* code added for CoW fork */
   }
   return 0;
 }

@@ -176,6 +176,11 @@ uint64          walkaddr(pagetable_t, uint64);
 int             copyout(pagetable_t, uint64, char *, uint64);
 int             copyin(pagetable_t, char *, uint64, uint64);
 int             copyinstr(pagetable_t, char *, uint64, uint64);
+void clearpgrefs(); // set to zero, called in main()
+int getpgrefcount(void *pa);
+void setpgref(void *pa); // set to one, called in kalloc()
+void incrpgref(void *pa);
+void decrpgref(void *pa);
 
 // plic.c
 void            plicinit(void);

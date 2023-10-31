@@ -27,6 +27,7 @@ void
 kinit()
 {
   initlock(&kmem.lock, "kmem");
+  clearpgrefs();   // for CoW fork
   freerange(end, (void*)PHYSTOP);
 }
 
@@ -50,6 +51,10 @@ kfree(void *pa)
 
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
+
+  // only proceed if the reference count of page is zero
+  if(getpgrefcount(pa) == 0)
+    return;
 
   // Fill with junk to catch dangling refs.
   memset(pa, 1, PGSIZE);
@@ -75,6 +80,9 @@ kalloc(void)
   if(r)
     kmem.freelist = r->next;
   release(&kmem.lock);
+  
+  if(r) // set the reference count of the page to one.
+    setpgref(r);
 
   if(r)
     memset((char*)r, 5, PGSIZE); // fill with junk
