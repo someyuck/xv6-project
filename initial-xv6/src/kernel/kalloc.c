@@ -52,8 +52,11 @@ kfree(void *pa)
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
 
+  // decrease reference count of the page
+  decrpgref((uint64)pa);
+
   // only proceed if the reference count of page is zero
-  if(getpgrefcount(pa) == 0)
+  if(getpgrefcount((uint64)pa) != 0)
     return;
 
   // Fill with junk to catch dangling refs.
@@ -82,7 +85,7 @@ kalloc(void)
   release(&kmem.lock);
   
   if(r) // set the reference count of the page to one.
-    setpgref(r);
+    setpgref((uint64)r);
 
   if(r)
     memset((char*)r, 5, PGSIZE); // fill with junk

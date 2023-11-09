@@ -69,62 +69,57 @@ void usertrap(void)
   else if ((which_dev = devintr()) != 0)
   {
     // ok
+  }
+  else if(r_scause() == 15) // store/write page fault
+  {
     // handle page faults for CoW fork implementation
-    if(r_scause() == 15) // store/write page fault
-      // pgfaulthandler()
+
+    // STVAL has the faulting virtual address, meaning its value and its page needs to be checked.
+    // if the PTE is marked as CoW, create a copy and assign to p (faulting process) (just add PTE_W if refcount is only 1).
+    // else if its read-only (and not CoW), meaning it was never marked with PTE_W, kill the process
+
+    uint64 va = r_stval();
+    if(va < 0 || va >= MAXVA)
     {
-      // STVAL has the faulting virtual address, meaning its value and its page needs to be checked.
-      // if the PTE is marked as CoW, create a copy and assign to p (faulting process) (just add PTE_W if refcount is only 1).
-      // else if its read-only (and not CoW), meaning it was never marked with PTE_W, kill the process
-
-      uint64 va = r_stval();
-      if(va < 0 || va >= MAXVA)
-      {
-        printf("usertrap: invalid virtual address\n");
-        setkilled(p);
-      }
-
-      pte_t *pte = walk(p->pagetable, va, 0);
-      if(pte == 0)
-      {
-        printf("usertrap: pte not present\n");
-        setkilled(p);
-      }
-      if(!(*pte & PTE_V))
-      {
-        printf("usertrap: page not present\n");
-        setkilled(p);
-      }
-      if(!(*pte & PTE_COW))
-      {
-        printf("usertrap: store attempt to read-only memory\n");
-        setkilled(p);
-      }
-
-      uint64 pa = PTE2PA(*pte);
-      if(getpgrefcount(&pa) == 1)
-      {
-        *pte |= PTE_W;
-        sfence_vma(); // flush the TLB
-      }
-      else
-      {
-        // allocate a new page and copy old page to this
-        char *new;
-        if((new = kalloc()) == 0)
-          panic("usertrap: kalloc");
-
-        uint64 flags = PTE_FLAGS(*pte);
-        memmove(new, (char*)pa, PGSIZE);
-        if(mappages(p->pagetable, va, PGSIZE, (uint64)new, flags | PTE_W | PTE_COW) != 0)
-          kfree(new);
-        else
-        {
-          decrpgref(&pa); // for old page
-          sfence_vma(); // flush the TLB
-        }
-      }
+      printf("usertrap: invalid virtual address\n");
+      setkilled(p);
+      goto ifkilled;
     }
+
+    pte_t *pte = walk(p->pagetable, va, 0);
+    if(pte == 0 || !(*pte & PTE_V))
+    {
+      printf("usertrap: page not present\n");
+      setkilled(p);
+      goto ifkilled;
+    }
+    if(!(*pte & PTE_COW))
+    {
+      printf("usertrap: store attempt to read-only memory\n");
+      setkilled(p);
+      goto ifkilled;
+    }
+
+    uint64 pa = PTE2PA(*pte);
+    // allocate a new page and copy old page to this
+    char *new;
+    if((new = kalloc()) == 0)
+    {
+      printf("usertrap: kalloc: out of memory\n");
+      setkilled(p);
+      goto ifkilled;
+    }
+
+    uint64 flags = PTE_FLAGS(*pte);
+    memmove(new, (char*)pa, PGSIZE);
+    
+    // change the page for the faulting process
+    *pte = PA2PTE(new) | flags;
+    *pte &= ~PTE_COW;
+    *pte |= PTE_W;
+
+    kfree((void*)pa); // for old page
+    sfence_vma(); // flush the TLB
   }
   else
   {
@@ -132,7 +127,7 @@ void usertrap(void)
     printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
     setkilled(p);
   }
-
+ifkilled:
   if (killed(p))
     exit(-1);
   

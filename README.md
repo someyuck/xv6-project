@@ -33,19 +33,21 @@ To view the report for the difference between my implementation of data sequenci
 
 - in kalloc, set the reference count of the page to one.
 - in uvmcopy, simply copy over parent's page table to the child, with PTE_W cleared for both. do not copy memory. increase reference count of page by 1.
-- in uvmunmap, decrease reference count of page by 1. -- ARE YOU SURE IT'S HERE?
-- in kfree, free only if reference count of page is 0.
+- in kfree, decrease reference count of page by 1, and free only if reference count of page is 0.
 - handle page faults in usertrap, by copying the page for the faulting process, updating its pte and adding the pte_w flag, decrease the ref count for the original page.
-
 - use sfence_vma() to flush the TLB whenever any page table is changed
 page fault codes: https://pdos.csail.mit.edu/6.828/2019/lec/l-usingvm.pdf
 
 
 # Assumptions
 1. If the scheduler is not set to `PBS` and the system call `set_priority` is used, or if `set_priority` is passed an invalid `pid` or `new_priority`, it will simply return -1.
+<<<<<<< HEAD
 2. `In case two or more processes have the same priority, we use the number of times the process has been scheduled to break the tie.` I assume here that a process that has been scheduled for a lesser number of times will be chosen.
 <<<<<<< HEAD
 >>>>>>> 94d8205 (added gitignore)
 =======
 3. For CoW fork, I mark the pages of the parent as read-only when it forks a child, even if some of those pages had write permission.
 >>>>>>> d4a821c (implemented CoW fork, not working rn)
+=======
+2. `In case two or more processes have the same priority, we use the number of times the process has been scheduled to break the tie.` I assume here that a process that has been scheduled for a lesser number of times will be chosen.
+>>>>>>> 3cc82d2 (minor change in cafe sim; cow seems to moo now)
