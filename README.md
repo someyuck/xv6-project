@@ -37,9 +37,18 @@ To view the report for the difference between my implementation of data sequenci
 - handle page faults in usertrap, by copying the page for the faulting process, updating its pte and adding the pte_w flag, decrease the ref count for the original page.
 - use sfence_vma() to flush the TLB whenever any page table is changed
 page fault codes: https://pdos.csail.mit.edu/6.828/2019/lec/l-usingvm.pdf
+resources:
+    https://pdos.csail.mit.edu/6.828/2023/labs/cow.html
+    https://www.cse.iitb.ac.in/~mythili/teaching/cs347_autumn2016/labs/lab6.pdf
+
+
+# Concurrency resources
+
+1. `sem_timedwait()`: https://stackoverflow.com/questions/37010836/how-to-correctly-use-sem-timedwait
 
 
 # Assumptions
+<<<<<<< HEAD
 1. If the scheduler is not set to `PBS` and the system call `set_priority` is used, or if `set_priority` is passed an invalid `pid` or `new_priority`, it will simply return -1.
 <<<<<<< HEAD
 2. `In case two or more processes have the same priority, we use the number of times the process has been scheduled to break the tie.` I assume here that a process that has been scheduled for a lesser number of times will be chosen.
@@ -51,3 +60,7 @@ page fault codes: https://pdos.csail.mit.edu/6.828/2019/lec/l-usingvm.pdf
 =======
 2. `In case two or more processes have the same priority, we use the number of times the process has been scheduled to break the tie.` I assume here that a process that has been scheduled for a lesser number of times will be chosen.
 >>>>>>> 3cc82d2 (minor change in cafe sim; cow seems to moo now)
+=======
+1. If the scheduler is not set to `PBS` and the system call `set_priority` is used, or if `set_priority` is passed an invalid value for `pid` or `new_priority`, it will simply return -1.
+2. `In case two or more processes have the same priority, we use the number of times the process has been scheduled to break the tie.` I assume here that a process that has been scheduled for a lesser number of times will be chosen.
+>>>>>>> 4344f64 (checked pbs tho might need to change set_priority a bit)

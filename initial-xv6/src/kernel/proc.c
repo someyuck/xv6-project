@@ -679,7 +679,7 @@ void scheduler(void)
       release(&p->lock);
     }
 
-    // schedule the process till completion (for now, change after they respond on doubts doc)
+    // schedule the process for one tick : so basically RR
     acquire(&chosenOne->lock);
     if(chosenOne->state == RUNNABLE)
     {
@@ -689,6 +689,10 @@ void scheduler(void)
       chosenOne->state = RUNNING;
       c->proc = chosenOne;
       swtch(&c->context, &chosenOne->context);
+      // update RTime of current process
+      chosenOne->RTime++;
+      updateRBI(chosenOne);
+      updateRBI(chosenOne);
       c->proc = 0;
     }
     release(&chosenOne->lock);

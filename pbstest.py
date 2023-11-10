@@ -46,7 +46,7 @@ def makePlot(processes: list[list[tuple[int, int]]]):
     plt.xlabel("CPU Ticks")
     plt.ylabel("Dynamic Priority")
     plt.title("PBS Analysis")
-    plt.savefig("pbs2.png") # change file name if pbstest is run with other options (1 or 2)
+    plt.savefig("pbsplots/pbs0c.png") # change file name if pbstest is run with other options (pbs0, pbs1 or pbs2), and if CPUS is changed (c1, c2 etc).
     plt.show()
 
 makePlot(processes)

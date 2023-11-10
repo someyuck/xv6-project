@@ -131,7 +131,7 @@ ifkilled:
   if (killed(p))
     exit(-1);
   
-  // give up the CPU if this is a timer interrupt. -- yield only if FCFS and PBS are not used
+  // give up the CPU if this is a timer interrupt. -- yield only if FCFS is not used
   if (which_dev == 2)
   {
     // if MLFQ is used:
@@ -173,11 +173,7 @@ ifkilled:
     #endif
 
     #ifdef PBS
-    // update WTime of RUNNABLE processes and STime of SLEEPING processes, and RTime of current process
-
-    p->RTime++;
-    updateRBI(p);
-    updateRBI(p);
+    // update WTime of RUNNABLE processes and STime of SLEEPING processes
 
     // code for pbstest.c
     if(strncmp(p->name, "pbstest", 16) == 0)
@@ -217,7 +213,7 @@ ifkilled:
         p->trapframe->epc = p->handler; // jump to handler
       }
     }
-    #if !defined(FCFS) && !defined(PBS)
+    #if !defined(FCFS)
     yield();
     #endif
   }
@@ -292,7 +288,7 @@ void kerneltrap()
   }
 
   // give up the CPU if this is a timer interrupt. -- only if FCFS is not used
-  #if !defined(FCFS) && !defined(PBS)
+  #if !defined(FCFS)
   if (which_dev == 2 && myproc() != 0 && myproc()->state == RUNNING)
     yield();
   #endif
