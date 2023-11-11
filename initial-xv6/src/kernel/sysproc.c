@@ -149,6 +149,8 @@ sys_set_priority(void)
 
   int ret = -1; // assumption
   #ifdef PBS
+  int oldDP = 0; // in case no pid found
+  int newDP = 0;
 
   struct proc *p;
   for(p = proc; p < &proc[NPROC]; p++)
@@ -157,15 +159,17 @@ sys_set_priority(void)
     if(p->pid == pid)
     {
       ret = p->StaticPriority;
+      oldDP = p->DynamicPriority;
       p->StaticPriority = newPriority;
       p->RBI = DefaultRBI;
       updateDP(p);
+      newDP = p->DynamicPriority;
       release(&p->lock);
       break;
     }
     release(&p->lock);
   }
-  if(newPriority < ret)
+  if(newDP < oldDP)
     yield();
   #endif
 

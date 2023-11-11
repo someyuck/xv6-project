@@ -174,15 +174,6 @@ ifkilled:
 
     #ifdef PBS
     // update WTime of RUNNABLE processes and STime of SLEEPING processes
-
-    // code for pbstest.c
-    if(strncmp(p->name, "pbstest", 16) == 0)
-    {
-      acquire(&p->lock);
-      printf("%d %d %d %d   %d %d %d\n", ticks, p->pid, p->StaticPriority, p->DynamicPriority, p->RBI, p->RTime, p->STime, p->WTime);
-      release(&p->lock);
-    }
-  
     for (int i = 0 ; i < NPROC; i++)
     {
       acquire(&proc[i].lock);

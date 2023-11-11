@@ -653,38 +653,29 @@ void scheduler(void)
     for(p = proc; p < &proc[NPROC]; p++)
     {
       acquire(&p->lock);
-      if(p->state == RUNNABLE && (chosenOne == 0 || p->DynamicPriority < chosenOne->DynamicPriority))
-        chosenOne = p;
-      release(&p->lock);
-    }
-    
-    if(chosenOne == 0) // no process found to run
-      continue;
-    
-    // now filter by schedCount
-    for(p = proc; p < &proc[NPROC]; p++)
-    {
-      acquire(&p->lock);
-      if(p->state == RUNNABLE && (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount < chosenOne->schedCount))
+      updateRBI(p);
+      updateDP(p);
+  
+      if(p->state == RUNNABLE && (chosenOne == 0 || (p->DynamicPriority < chosenOne->DynamicPriority) ||
+        (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount < chosenOne->schedCount) || 
+        (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount == chosenOne->schedCount && p->ctime < chosenOne->ctime)))
         chosenOne = p;
       release(&p->lock);
     }
 
-    // finally filter by ctime
-    for(p = proc; p < &proc[NPROC]; p++)
-    {
-      acquire(&p->lock);
-      if(p->state == RUNNABLE && (p->DynamicPriority == chosenOne->DynamicPriority && p->schedCount == chosenOne->schedCount && p->ctime < chosenOne->ctime))
-        chosenOne = p;
-      release(&p->lock);
-    }
+    if(chosenOne == 0) // no process found to schedule
+      continue;
 
     // schedule the process for one tick : so basically RR
     acquire(&chosenOne->lock);
     if(chosenOne->state == RUNNABLE)
     {
+      // code for pbstest.c
+      if(strncmp(chosenOne->name, "pbstest", 16) == 0)
+        printf("%d %d %d %d   %d %d %d\n", ticks, chosenOne->pid, chosenOne->StaticPriority, chosenOne->DynamicPriority, chosenOne->RBI, chosenOne->RTime, chosenOne->STime, chosenOne->WTime);
+
       chosenOne->RTime = 0;
-      chosenOne->STime = 0; // should we?
+      chosenOne->STime = 0;
       chosenOne->schedCount++;
       chosenOne->state = RUNNING;
       c->proc = chosenOne;
@@ -692,7 +683,7 @@ void scheduler(void)
       // update RTime of current process
       chosenOne->RTime++;
       updateRBI(chosenOne);
-      updateRBI(chosenOne);
+      updateDP(chosenOne);
       c->proc = 0;
     }
     release(&chosenOne->lock);
