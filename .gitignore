@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# *.tex *.dvi *.idx *.aux *.log *.ind *.ilg */*.o */*.d */*.asm */*.sym 
-=======
->>>>>>> 94d8205 (added gitignore)
 **/*.tex
 **/*.dvi
 **/*.idx
@@ -23,15 +19,4 @@
 **/usys.S
 /initial-xv6/src/user/_*
 **/tests-out/
-
-<<<<<<< HEAD
 **/.vscode/
-=======
-**/.vscode/
-
-concurrency/testcases.txt
-concurrency/1
-concurrency/2
-
-initial-xv6/src/typescript
->>>>>>> 4344f64 (checked pbs tho might need to change set_priority a bit)
